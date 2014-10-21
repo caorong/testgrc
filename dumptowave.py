@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 ##################################################
 # Gnuradio Python Flow Graph
-# Title: Top Block
-# Generated: Tue Oct 21 15:10:33 2014
+# Title: Dumptowave
+# Generated: Tue Oct 21 16:13:46 2014
 ##################################################
 
 from gnuradio import analog
+from gnuradio import audio
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
@@ -18,18 +19,18 @@ from optparse import OptionParser
 import osmosdr
 import wx
 
-class top_block(grc_wxgui.top_block_gui):
+class dumptowave(grc_wxgui.top_block_gui):
 
     def __init__(self):
-        grc_wxgui.top_block_gui.__init__(self, title="Top Block")
+        grc_wxgui.top_block_gui.__init__(self, title="Dumptowave")
 
         ##################################################
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 8e5
         self.channel_width = channel_width = 200e3
-        self.channel_freq = channel_freq = 99.3e6
-        self.center_freq = center_freq = 101.8e6
+        self.channel_freq = channel_freq = 97.7e6
+        self.center_freq = center_freq = 101.7e6
         self.audio_gain = audio_gain = 1
 
         ##################################################
@@ -73,8 +74,8 @@ class top_block(grc_wxgui.top_block_gui):
         	sizer=_channel_freq_sizer,
         	value=self.channel_freq,
         	callback=self.set_channel_freq,
-        	minimum=50e6,
-        	maximum=220e6,
+        	minimum=85e6,
+        	maximum=120e6,
         	num_steps=100,
         	style=wx.SL_HORIZONTAL,
         	cast=float,
@@ -148,9 +149,10 @@ class top_block(grc_wxgui.top_block_gui):
           
         self.low_pass_filter_0 = filter.fir_filter_ccf(int(samp_rate/channel_width), firdes.low_pass(
         	1, samp_rate, 75e3, 25e3, firdes.WIN_HAMMING, 6.76))
-        self.blocks_udp_sink_0 = blocks.udp_sink(gr.sizeof_float*1, "0.0.0.0", 5005, 1472, True)
+        self.blocks_wavfile_sink_0 = blocks.wavfile_sink("/home/caorong/workspace_hackrf/123.wav", 1, 48000, 8)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((audio_gain, ))
+        self.audio_sink_0 = audio.sink(48000, "", True)
         self.analog_wfm_rcv_0 = analog.wfm_rcv(
         	quad_rate=480e3,
         	audio_decimation=10,
@@ -166,7 +168,8 @@ class top_block(grc_wxgui.top_block_gui):
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.osmosdr_source_0, 0), (self.blocks_multiply_xx_0, 0))
         self.connect((self.analog_wfm_rcv_0, 0), (self.blocks_multiply_const_vxx_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_udp_sink_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.audio_sink_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_0, 0))
 
 
 
@@ -192,9 +195,9 @@ class top_block(grc_wxgui.top_block_gui):
 
     def set_channel_freq(self, channel_freq):
         self.channel_freq = channel_freq
-        self.analog_sig_source_x_0.set_frequency(self.center_freq - self.channel_freq)
         self._channel_freq_slider.set_value(self.channel_freq)
         self._channel_freq_text_box.set_value(self.channel_freq)
+        self.analog_sig_source_x_0.set_frequency(self.center_freq - self.channel_freq)
 
     def get_center_freq(self):
         return self.center_freq
@@ -211,9 +214,9 @@ class top_block(grc_wxgui.top_block_gui):
 
     def set_audio_gain(self, audio_gain):
         self.audio_gain = audio_gain
+        self.blocks_multiply_const_vxx_0.set_k((self.audio_gain, ))
         self._audio_gain_slider.set_value(self.audio_gain)
         self._audio_gain_text_box.set_value(self.audio_gain)
-        self.blocks_multiply_const_vxx_0.set_k((self.audio_gain, ))
 
 if __name__ == '__main__':
     import ctypes
@@ -226,6 +229,6 @@ if __name__ == '__main__':
             print "Warning: failed to XInitThreads()"
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
     (options, args) = parser.parse_args()
-    tb = top_block()
+    tb = dumptowave()
     tb.Start(True)
     tb.Wait()
