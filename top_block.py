@@ -2,7 +2,7 @@
 ##################################################
 # Gnuradio Python Flow Graph
 # Title: Top Block
-# Generated: Thu Oct 23 00:30:08 2014
+# Generated: Thu Oct 23 19:05:14 2014
 ##################################################
 
 from gnuradio import analog
@@ -30,61 +30,62 @@ class top_block(grc_wxgui.top_block_gui):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 8e5
+        self.samp_rate_0 = samp_rate_0 = 8e6
+        self.samp_rate = samp_rate = 8e6
         self.channel_width = channel_width = 200e3
-        self.channel_freq = channel_freq = 97.7e6
-        self.center_freq = center_freq = 101.7e6
-        self.audio_gain = audio_gain = 0
+        self.channel_freq2 = channel_freq2 = 98.5e6
+        self.center_freq = center_freq = 97.5e6
+        self.audio_gain = audio_gain = 1
 
         ##################################################
         # Blocks
         ##################################################
-        _samp_rate_sizer = wx.BoxSizer(wx.VERTICAL)
-        self._samp_rate_text_box = forms.text_box(
+        _channel_width_sizer = wx.BoxSizer(wx.VERTICAL)
+        self._channel_width_text_box = forms.text_box(
         	parent=self.GetWin(),
-        	sizer=_samp_rate_sizer,
-        	value=self.samp_rate,
-        	callback=self.set_samp_rate,
-        	label='samp_rate',
+        	sizer=_channel_width_sizer,
+        	value=self.channel_width,
+        	callback=self.set_channel_width,
+        	label='channel_width',
         	converter=forms.float_converter(),
         	proportion=0,
         )
-        self._samp_rate_slider = forms.slider(
+        self._channel_width_slider = forms.slider(
         	parent=self.GetWin(),
-        	sizer=_samp_rate_sizer,
-        	value=self.samp_rate,
-        	callback=self.set_samp_rate,
-        	minimum=8e4,
-        	maximum=10e7,
+        	sizer=_channel_width_sizer,
+        	value=self.channel_width,
+        	callback=self.set_channel_width,
+        	minimum=100e3,
+        	maximum=300e3,
+        	num_steps=10,
+        	style=wx.SL_HORIZONTAL,
+        	cast=float,
+        	proportion=1,
+        )
+        self.Add(_channel_width_sizer)
+        _channel_freq2_sizer = wx.BoxSizer(wx.VERTICAL)
+        self._channel_freq2_text_box = forms.text_box(
+        	parent=self.GetWin(),
+        	sizer=_channel_freq2_sizer,
+        	value=self.channel_freq2,
+        	callback=self.set_channel_freq2,
+        	label='channel_freq2',
+        	converter=forms.float_converter(),
+        	proportion=0,
+        )
+        self._channel_freq2_slider = forms.slider(
+        	parent=self.GetWin(),
+        	sizer=_channel_freq2_sizer,
+        	value=self.channel_freq2,
+        	callback=self.set_channel_freq2,
+        	minimum=87.9e6,
+        	maximum=107.9e6,
         	num_steps=100,
         	style=wx.SL_HORIZONTAL,
         	cast=float,
         	proportion=1,
         )
-        self.Add(_samp_rate_sizer)
-        _center_freq_sizer = wx.BoxSizer(wx.VERTICAL)
-        self._center_freq_text_box = forms.text_box(
-        	parent=self.GetWin(),
-        	sizer=_center_freq_sizer,
-        	value=self.center_freq,
-        	callback=self.set_center_freq,
-        	label='center_freq',
-        	converter=forms.float_converter(),
-        	proportion=0,
-        )
-        self._center_freq_slider = forms.slider(
-        	parent=self.GetWin(),
-        	sizer=_center_freq_sizer,
-        	value=self.center_freq,
-        	callback=self.set_center_freq,
-        	minimum=85e6,
-        	maximum=120e6,
-        	num_steps=100,
-        	style=wx.SL_HORIZONTAL,
-        	cast=float,
-        	proportion=1,
-        )
-        self.Add(_center_freq_sizer)
+        self.Add(_channel_freq2_sizer)
         _audio_gain_sizer = wx.BoxSizer(wx.VERTICAL)
         self._audio_gain_text_box = forms.text_box(
         	parent=self.GetWin(),
@@ -108,9 +109,9 @@ class top_block(grc_wxgui.top_block_gui):
         	proportion=1,
         )
         self.Add(_audio_gain_sizer)
-        self.wxgui_fftsink2_0_0 = fftsink2.fft_sink_c(
+        self.wxgui_fftsink2_0 = fftsink2.fft_sink_c(
         	self.GetWin(),
-        	baseband_freq=channel_freq,
+        	baseband_freq=center_freq,
         	y_per_div=10,
         	y_divs=10,
         	ref_level=0,
@@ -123,7 +124,7 @@ class top_block(grc_wxgui.top_block_gui):
         	title="FFT Plot",
         	peak_hold=False,
         )
-        self.Add(self.wxgui_fftsink2_0_0.win)
+        self.Add(self.wxgui_fftsink2_0.win)
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
                 interpolation=12,
                 decimation=5,
@@ -145,79 +146,79 @@ class top_block(grc_wxgui.top_block_gui):
           
         self.low_pass_filter_0 = filter.fir_filter_ccf(int(samp_rate/channel_width), firdes.low_pass(
         	1, samp_rate, 75e3, 25e3, firdes.WIN_HAMMING, 6.76))
-        self.blocks_wavfile_sink_0 = blocks.wavfile_sink("/home/caorong/workspace_hackrf/123.wav", 1, 32000, 8)
-        self.blocks_udp_sink_0 = blocks.udp_sink(gr.sizeof_short*1, "192.168.1.13", 5005, 1472, True)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((audio_gain, ))
-        self.blocks_float_to_short_0 = blocks.float_to_short(1, 32767)
         self.audio_sink_0 = audio.sink(48000, "", True)
         self.analog_wfm_rcv_0 = analog.wfm_rcv(
         	quad_rate=480e3,
         	audio_decimation=10,
         )
-        self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, center_freq - channel_freq, 1, 0)
+        self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, center_freq - channel_freq2, 1, 0)
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.osmosdr_source_0, 0), (self.wxgui_fftsink2_0, 0))
         self.connect((self.osmosdr_source_0, 0), (self.blocks_multiply_xx_0, 0))
-        self.connect((self.rational_resampler_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.blocks_multiply_xx_0, 0), (self.low_pass_filter_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
         self.connect((self.analog_wfm_rcv_0, 0), (self.blocks_multiply_const_vxx_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.wxgui_fftsink2_0_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.audio_sink_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_float_to_short_0, 0))
-        self.connect((self.blocks_float_to_short_0, 0), (self.blocks_udp_sink_0, 0))
 
 
+
+    def get_samp_rate_0(self):
+        return self.samp_rate_0
+
+    def set_samp_rate_0(self, samp_rate_0):
+        self.samp_rate_0 = samp_rate_0
 
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 75e3, 25e3, firdes.WIN_HAMMING, 6.76))
         self.osmosdr_source_0.set_sample_rate(self.samp_rate)
-        self.wxgui_fftsink2_0_0.set_sample_rate(self.samp_rate)
-        self._samp_rate_slider.set_value(self.samp_rate)
-        self._samp_rate_text_box.set_value(self.samp_rate)
+        self.wxgui_fftsink2_0.set_sample_rate(self.samp_rate)
+        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
 
     def get_channel_width(self):
         return self.channel_width
 
     def set_channel_width(self, channel_width):
         self.channel_width = channel_width
+        self._channel_width_slider.set_value(self.channel_width)
+        self._channel_width_text_box.set_value(self.channel_width)
 
-    def get_channel_freq(self):
-        return self.channel_freq
+    def get_channel_freq2(self):
+        return self.channel_freq2
 
-    def set_channel_freq(self, channel_freq):
-        self.channel_freq = channel_freq
-        self.analog_sig_source_x_0.set_frequency(self.center_freq - self.channel_freq)
-        self.wxgui_fftsink2_0_0.set_baseband_freq(self.channel_freq)
+    def set_channel_freq2(self, channel_freq2):
+        self.channel_freq2 = channel_freq2
+        self.analog_sig_source_x_0.set_frequency(self.center_freq - self.channel_freq2)
+        self._channel_freq2_slider.set_value(self.channel_freq2)
+        self._channel_freq2_text_box.set_value(self.channel_freq2)
 
     def get_center_freq(self):
         return self.center_freq
 
     def set_center_freq(self, center_freq):
         self.center_freq = center_freq
-        self.analog_sig_source_x_0.set_frequency(self.center_freq - self.channel_freq)
         self.osmosdr_source_0.set_center_freq(self.center_freq, 0)
-        self._center_freq_slider.set_value(self.center_freq)
-        self._center_freq_text_box.set_value(self.center_freq)
+        self.wxgui_fftsink2_0.set_baseband_freq(self.center_freq)
+        self.analog_sig_source_x_0.set_frequency(self.center_freq - self.channel_freq2)
 
     def get_audio_gain(self):
         return self.audio_gain
 
     def set_audio_gain(self, audio_gain):
         self.audio_gain = audio_gain
+        self.blocks_multiply_const_vxx_0.set_k((self.audio_gain, ))
         self._audio_gain_slider.set_value(self.audio_gain)
         self._audio_gain_text_box.set_value(self.audio_gain)
-        self.blocks_multiply_const_vxx_0.set_k((self.audio_gain, ))
 
 if __name__ == '__main__':
     import ctypes
