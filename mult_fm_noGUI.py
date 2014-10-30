@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 ##################################################
 # Gnuradio Python Flow Graph
-# Title: Mult Fm
-# Generated: Fri Oct 24 13:58:26 2014
+# Title: Mult Fm Nogui
+# Generated: Tue Oct 28 15:02:49 2014
 ##################################################
 
 from gnuradio import analog
@@ -13,75 +13,24 @@ from gnuradio import filter
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
-from gnuradio.wxgui import forms
-from grc_gnuradio import wxgui as grc_wxgui
 from optparse import OptionParser
 import osmosdr
-import wx
 
-class mult_fm(grc_wxgui.top_block_gui):
+class mult_fm_noGUI(gr.top_block):
 
     def __init__(self):
-        grc_wxgui.top_block_gui.__init__(self, title="Mult Fm")
+        gr.top_block.__init__(self, "Mult Fm Nogui")
 
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 11e6
+        self.samp_rate = samp_rate = 8e6
         self.channel_width = channel_width = 200e3
-        self.channel_freq1 = channel_freq1 = 94.0e6
         self.center_freq = center_freq = 97.9e6
-        self.audio_gain1 = audio_gain1 = 1
 
         ##################################################
         # Blocks
         ##################################################
-        _channel_freq1_sizer = wx.BoxSizer(wx.VERTICAL)
-        self._channel_freq1_text_box = forms.text_box(
-        	parent=self.GetWin(),
-        	sizer=_channel_freq1_sizer,
-        	value=self.channel_freq1,
-        	callback=self.set_channel_freq1,
-        	label='channel_freq1',
-        	converter=forms.float_converter(),
-        	proportion=0,
-        )
-        self._channel_freq1_slider = forms.slider(
-        	parent=self.GetWin(),
-        	sizer=_channel_freq1_sizer,
-        	value=self.channel_freq1,
-        	callback=self.set_channel_freq1,
-        	minimum=87.9e6,
-        	maximum=107.9e6,
-        	num_steps=100,
-        	style=wx.SL_HORIZONTAL,
-        	cast=float,
-        	proportion=1,
-        )
-        self.Add(_channel_freq1_sizer)
-        _audio_gain1_sizer = wx.BoxSizer(wx.VERTICAL)
-        self._audio_gain1_text_box = forms.text_box(
-        	parent=self.GetWin(),
-        	sizer=_audio_gain1_sizer,
-        	value=self.audio_gain1,
-        	callback=self.set_audio_gain1,
-        	label='audio_gain1',
-        	converter=forms.float_converter(),
-        	proportion=0,
-        )
-        self._audio_gain1_slider = forms.slider(
-        	parent=self.GetWin(),
-        	sizer=_audio_gain1_sizer,
-        	value=self.audio_gain1,
-        	callback=self.set_audio_gain1,
-        	minimum=0,
-        	maximum=10,
-        	num_steps=100,
-        	style=wx.SL_HORIZONTAL,
-        	cast=float,
-        	proportion=1,
-        )
-        self.Add(_audio_gain1_sizer)
         self.rational_resampler_xxx_0_0_0_0_0 = filter.rational_resampler_ccc(
                 interpolation=12,
                 decimation=5,
@@ -150,7 +99,6 @@ class mult_fm(grc_wxgui.top_block_gui):
         self.blocks_multiply_xx_0_0_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_xx_0_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((audio_gain1, ))
         self.blocks_float_to_short_0_3 = blocks.float_to_short(1, 32767)
         self.blocks_float_to_short_0_2 = blocks.float_to_short(1, 32767)
         self.blocks_float_to_short_0_1 = blocks.float_to_short(1, 32767)
@@ -181,7 +129,7 @@ class mult_fm(grc_wxgui.top_block_gui):
         self.analog_sig_source_x_3 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, center_freq - 103.7e6, 1, 0)
         self.analog_sig_source_x_2 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, center_freq - 97.7e6, 1, 0)
         self.analog_sig_source_x_1 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, center_freq - 101.7e6, 1, 0)
-        self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, center_freq - channel_freq1, 1, 0)
+        self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, center_freq - 94.0, 1, 0)
 
         ##################################################
         # Connections
@@ -191,13 +139,10 @@ class mult_fm(grc_wxgui.top_block_gui):
         self.connect((self.blocks_multiply_xx_0, 0), (self.low_pass_filter_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
-        self.connect((self.analog_wfm_rcv_0, 0), (self.blocks_multiply_const_vxx_0, 0))
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.audio_sink_0, 0))
         self.connect((self.analog_wfm_rcv_0, 0), (self.blocks_wavfile_sink_0, 0))
         self.connect((self.osmosdr_source_0, 0), (self.blocks_multiply_xx_0_0_0, 0))
         self.connect((self.analog_sig_source_x_1, 0), (self.blocks_multiply_xx_0_0, 1))
         self.connect((self.blocks_multiply_xx_0_0, 0), (self.low_pass_filter_0_0, 0))
-        self.connect((self.low_pass_filter_0_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.analog_wfm_rcv_0_0, 0))
         self.connect((self.analog_wfm_rcv_0_0, 0), (self.blocks_wavfile_sink_0_0, 0))
         self.connect((self.osmosdr_source_0, 0), (self.blocks_multiply_xx_0_0, 0))
@@ -228,6 +173,8 @@ class mult_fm(grc_wxgui.top_block_gui):
         self.connect((self.low_pass_filter_0_0_0_0_0, 0), (self.rational_resampler_xxx_0_0_0_0_0, 0))
         self.connect((self.rational_resampler_xxx_0_0_0_0_0, 0), (self.analog_wfm_rcv_0_0_0_0_0, 0))
         self.connect((self.analog_wfm_rcv_0_0_0_0_0, 0), (self.blocks_wavfile_sink_0_0_0_0_0, 0))
+        self.connect((self.analog_wfm_rcv_0_0, 0), (self.audio_sink_0, 0))
+        self.connect((self.low_pass_filter_0_0, 0), (self.rational_resampler_xxx_0_0, 0))
 
 
 
@@ -254,15 +201,6 @@ class mult_fm(grc_wxgui.top_block_gui):
     def set_channel_width(self, channel_width):
         self.channel_width = channel_width
 
-    def get_channel_freq1(self):
-        return self.channel_freq1
-
-    def set_channel_freq1(self, channel_freq1):
-        self.channel_freq1 = channel_freq1
-        self._channel_freq1_slider.set_value(self.channel_freq1)
-        self._channel_freq1_text_box.set_value(self.channel_freq1)
-        self.analog_sig_source_x_0.set_frequency(self.center_freq - self.channel_freq1)
-
     def get_center_freq(self):
         return self.center_freq
 
@@ -273,28 +211,13 @@ class mult_fm(grc_wxgui.top_block_gui):
         self.analog_sig_source_x_2.set_frequency(self.center_freq - 97.7e6)
         self.analog_sig_source_x_3.set_frequency(self.center_freq - 103.7e6)
         self.analog_sig_source_x_1.set_frequency(self.center_freq - 101.7e6)
-        self.analog_sig_source_x_0.set_frequency(self.center_freq - self.channel_freq1)
-
-    def get_audio_gain1(self):
-        return self.audio_gain1
-
-    def set_audio_gain1(self, audio_gain1):
-        self.audio_gain1 = audio_gain1
-        self._audio_gain1_slider.set_value(self.audio_gain1)
-        self._audio_gain1_text_box.set_value(self.audio_gain1)
-        self.blocks_multiply_const_vxx_0.set_k((self.audio_gain1, ))
+        self.analog_sig_source_x_0.set_frequency(self.center_freq - 94.0)
 
 if __name__ == '__main__':
-    import ctypes
-    import sys
-    if sys.platform.startswith('linux'):
-        try:
-            x11 = ctypes.cdll.LoadLibrary('libX11.so')
-            x11.XInitThreads()
-        except:
-            print "Warning: failed to XInitThreads()"
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
     (options, args) = parser.parse_args()
-    tb = mult_fm()
-    tb.Start(True)
-    tb.Wait()
+    tb = mult_fm_noGUI()
+    tb.start()
+    raw_input('Press Enter to quit: ')
+    tb.stop()
+    tb.wait()
