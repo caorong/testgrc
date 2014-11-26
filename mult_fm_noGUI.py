@@ -2,11 +2,10 @@
 ##################################################
 # Gnuradio Python Flow Graph
 # Title: Mult Fm Nogui
-# Generated: Tue Oct 28 15:02:49 2014
+# Generated: Tue Nov 11 19:09:54 2014
 ##################################################
 
 from gnuradio import analog
-from gnuradio import audio
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
@@ -92,7 +91,7 @@ class mult_fm_noGUI(gr.top_block):
         self.blocks_udp_sink_0_3 = blocks.udp_sink(gr.sizeof_short*1, "0.0.0.0", 5009, 1472, True)
         self.blocks_udp_sink_0_2 = blocks.udp_sink(gr.sizeof_short*1, "0.0.0.0", 5008, 1472, True)
         self.blocks_udp_sink_0_1 = blocks.udp_sink(gr.sizeof_short*1, "0.0.0.0", 5007, 1472, True)
-        self.blocks_udp_sink_0_0 = blocks.udp_sink(gr.sizeof_short*1, "0.0.0.0", 5006, 1472, True)
+        self.blocks_udp_sink_0_0 = blocks.udp_sink(gr.sizeof_short*1, "192.168.3.131", 5006, 1472, True)
         self.blocks_udp_sink_0 = blocks.udp_sink(gr.sizeof_short*1, "0.0.0.0", 5005, 1472, True)
         self.blocks_multiply_xx_0_0_0_0_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_xx_0_0_0_0 = blocks.multiply_vcc(1)
@@ -104,7 +103,6 @@ class mult_fm_noGUI(gr.top_block):
         self.blocks_float_to_short_0_1 = blocks.float_to_short(1, 32767)
         self.blocks_float_to_short_0_0 = blocks.float_to_short(1, 32767)
         self.blocks_float_to_short_0 = blocks.float_to_short(1, 32767)
-        self.audio_sink_0 = audio.sink(48000, "", True)
         self.analog_wfm_rcv_0_0_0_0_0 = analog.wfm_rcv(
         	quad_rate=480e3,
         	audio_decimation=10,
@@ -143,7 +141,6 @@ class mult_fm_noGUI(gr.top_block):
         self.connect((self.osmosdr_source_0, 0), (self.blocks_multiply_xx_0_0_0, 0))
         self.connect((self.analog_sig_source_x_1, 0), (self.blocks_multiply_xx_0_0, 1))
         self.connect((self.blocks_multiply_xx_0_0, 0), (self.low_pass_filter_0_0, 0))
-        self.connect((self.rational_resampler_xxx_0_0, 0), (self.analog_wfm_rcv_0_0, 0))
         self.connect((self.analog_wfm_rcv_0_0, 0), (self.blocks_wavfile_sink_0_0, 0))
         self.connect((self.osmosdr_source_0, 0), (self.blocks_multiply_xx_0_0, 0))
         self.connect((self.analog_sig_source_x_2, 0), (self.blocks_multiply_xx_0_0_0, 1))
@@ -173,8 +170,8 @@ class mult_fm_noGUI(gr.top_block):
         self.connect((self.low_pass_filter_0_0_0_0_0, 0), (self.rational_resampler_xxx_0_0_0_0_0, 0))
         self.connect((self.rational_resampler_xxx_0_0_0_0_0, 0), (self.analog_wfm_rcv_0_0_0_0_0, 0))
         self.connect((self.analog_wfm_rcv_0_0_0_0_0, 0), (self.blocks_wavfile_sink_0_0_0_0_0, 0))
-        self.connect((self.analog_wfm_rcv_0_0, 0), (self.audio_sink_0, 0))
         self.connect((self.low_pass_filter_0_0, 0), (self.rational_resampler_xxx_0_0, 0))
+        self.connect((self.rational_resampler_xxx_0_0, 0), (self.analog_wfm_rcv_0_0, 0))
 
 
 
@@ -192,8 +189,8 @@ class mult_fm_noGUI(gr.top_block):
         self.analog_sig_source_x_2.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_3.set_sampling_freq(self.samp_rate)
         self.low_pass_filter_0_0_0_0_0.set_taps(firdes.low_pass(1, self.samp_rate, 75e3, 25e3, firdes.WIN_HAMMING, 6.76))
-        self.analog_sig_source_x_1.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
+        self.analog_sig_source_x_1.set_sampling_freq(self.samp_rate)
 
     def get_channel_width(self):
         return self.channel_width
@@ -210,8 +207,8 @@ class mult_fm_noGUI(gr.top_block):
         self.analog_sig_source_x_4.set_frequency(self.center_freq - 105.7e6)
         self.analog_sig_source_x_2.set_frequency(self.center_freq - 97.7e6)
         self.analog_sig_source_x_3.set_frequency(self.center_freq - 103.7e6)
-        self.analog_sig_source_x_1.set_frequency(self.center_freq - 101.7e6)
         self.analog_sig_source_x_0.set_frequency(self.center_freq - 94.0)
+        self.analog_sig_source_x_1.set_frequency(self.center_freq - 101.7e6)
 
 if __name__ == '__main__':
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
